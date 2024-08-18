@@ -1,7 +1,6 @@
-import { Measure } from "@/data-model";
-import { Button } from "./button";
+import { Button } from "../../components/ui/button";
 import { usePantry } from "@/hooks/usePantry";
-import { CardCustom } from "./card/CardCustom";
+import { CardCustom } from "../../components/ui/card/CardCustom";
 import {
   ModalStatus,
   useOverviewContext,
@@ -14,8 +13,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { AddFoodModal } from "./AddFoodModal";
+import { useEffect } from "react";
 
-export const Pantry = () => {
+export const PantryCard = () => {
   const { pantry, addIngredient } = usePantry();
   const { modalStatus, openAddFoodModal, closeAddFoodModal } =
     useOverviewContext();
@@ -28,6 +29,10 @@ export const Pantry = () => {
   ];
   const rowData = pantry?.ingredients;
 
+  useEffect(() => {
+    console.log("ingredients:", rowData);
+  }, [rowData]);
+
   return (
     <>
       <CardCustom
@@ -38,21 +43,7 @@ export const Pantry = () => {
       >
         <Button onClick={openAddFoodModal}>Add food</Button>
       </CardCustom>
-
-      <Dialog
-        open={modalStatus === ModalStatus.AddFood}
-        onOpenChange={closeAddFoodModal}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Are you absolutely sure?</DialogTitle>
-            <DialogDescription>
-              This action cannot be undone. This will permanently delete your
-              account and remove your data from our servers.
-            </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
+      <AddFoodModal onSubmit={addIngredient} />
     </>
   );
 };

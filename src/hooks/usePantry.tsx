@@ -31,6 +31,7 @@ export const usePantry = () => {
 
   return {
     pantry,
+    ingredients,
     addIngredient,
     removeIngredient,
     isLoading: isLoading || !pantry,

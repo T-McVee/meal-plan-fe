@@ -1,9 +1,7 @@
 import React from "react";
 import { SideNav } from "./ui/SideNav";
 import { Header } from "./ui/Header";
-import { Pantry } from "./ui/Pantry";
-import { Cookbook } from "./ui/Cookbook";
-import OverviewContextProvider from "@/pages/overview/overviewContext";
+import { OverviewPage } from "@/pages/overview/OverviewPage";
 
 interface IProps {
   children?: React.ReactNode;
@@ -17,13 +15,7 @@ export const Page = (props: IProps) => {
       <SideNav />
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
         <Header />
-
-        <div className="flex px-6 gap-6">
-          <OverviewContextProvider>
-            <Pantry />
-            <Cookbook />
-          </OverviewContextProvider>
-        </div>
+        <OverviewPage />
         {children}
       </div>
     </div>

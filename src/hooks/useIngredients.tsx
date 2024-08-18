@@ -1,6 +1,5 @@
 import { Measure, ingredientRaw } from "@/data-model";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
 
 export class Pantry {
   constructor(private _ingredients: ingredientRaw[]) {}
