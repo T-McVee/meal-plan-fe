@@ -1,6 +1,6 @@
-import React from "react";
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -31,6 +31,7 @@ export const TextInput = (props: IProps) => {
               {...field}
             />
           </FormControl>
+          <FormDescription>This is your public display name.</FormDescription>
           <FormMessage />
         </FormItem>
       )}

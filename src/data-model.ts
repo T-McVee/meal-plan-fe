@@ -1,13 +1,23 @@
-export type ingredientRaw = {
-  id: string;
-  name: string;
-  price: number;
-  size: number;
-  measure: Measure;
-  category?: Category;
-  sku?: string;
-  supplier?: string;
-};
+import { z } from "zod";
+
+export enum Measure {
+  Grams = "g",
+  Milliliters = "ml",
+  Each = "Each",
+}
+
+export const IngredientRawSchema = z.object({
+  id: z.string().nullable(),
+  name: z.string({ message: "poop" }),
+  price: z.number(),
+  size: z.number(),
+  measure: z.nativeEnum(Measure),
+  category: z.string().optional(),
+  supplier: z.string().optional(),
+  sku: z.string().optional(),
+});
+
+export type ingredientRaw = z.infer<typeof IngredientRawSchema>;
 
 export type ingredientPortion = {
   ingredientId: string;
@@ -43,9 +53,4 @@ export enum Category {
   Meat = "Meat",
   Seafood = "Seafood",
   DryGoods = "Dry Goods",
-}
-export enum Measure {
-  Grams = "g",
-  Milliliters = "ml",
-  Each = "Each",
 }

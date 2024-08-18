@@ -10,7 +10,7 @@ import { ModalStatus, useOverviewContext } from "./overviewContext";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { ingredientRaw, Measure } from "@/data-model";
+import { ingredientRaw, IngredientRawSchema, Measure } from "@/data-model";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { TextInput } from "@/components/ui/form/TextInput";
@@ -18,14 +18,6 @@ import { NumberInput } from "@/components/ui/form/NumberInput";
 import { SelectInput } from "@/components/ui/form/SelectInput";
 import { usePantry } from "@/hooks/usePantry";
 import { Pantry } from "@/hooks/useIngredients";
-
-const AddFoodModalSchema = z.object({
-  name: z.string(),
-  price: z.number(),
-  size: z.number(),
-  measure: z.string(),
-  supplier: z.string().optional(),
-});
 
 interface IProps {
   onSubmit: (data: ingredientRaw) => void;
@@ -35,9 +27,10 @@ export const AddFoodModal = (props: IProps) => {
   const { onSubmit } = props;
   const { modalStatus, closeAddFoodModal } = useOverviewContext();
 
-  const form = useForm<z.infer<typeof AddFoodModalSchema>>({
-    resolver: zodResolver(AddFoodModalSchema),
+  const form = useForm<ingredientRaw>({
+    resolver: zodResolver(IngredientRawSchema),
     defaultValues: {
+      id: null,
       name: "Flour",
       price: 2,
       size: 10,
@@ -46,10 +39,8 @@ export const AddFoodModal = (props: IProps) => {
     },
   });
 
-  function handleSubmit(data: z.infer<typeof AddFoodModalSchema>) {
-    console.log("data:", data);
-    const newIngredient = { id: "0", ...data, measure: Measure.Grams };
-    onSubmit(newIngredient);
+  function handleSubmit(data: ingredientRaw) {
+    onSubmit({ ...data, id: "123" });
     closeAddFoodModal();
   }
 

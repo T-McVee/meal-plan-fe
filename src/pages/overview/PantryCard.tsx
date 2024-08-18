@@ -18,8 +18,7 @@ import { useEffect } from "react";
 
 export const PantryCard = () => {
   const { pantry, addIngredient } = usePantry();
-  const { modalStatus, openAddFoodModal, closeAddFoodModal } =
-    useOverviewContext();
+  const { openAddFoodModal } = useOverviewContext();
 
   const colDefs = [
     { field: "name" },
