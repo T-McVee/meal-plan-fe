@@ -1,40 +1,21 @@
-import React from "react";
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../form";
 import { Input } from "../input";
+import { BaseInput, IBaseInputProps } from "./BaseInput";
 
-interface IProps {
-  control: any;
-  name: string;
-  label: string;
-  placeholder?: string;
-  className?: string;
-}
+interface INumberInputProps extends IBaseInputProps {}
 
-export const NumberInput = (props: IProps) => {
+export const NumberInput = (props: INumberInputProps) => {
   const { control, name, label, placeholder } = props;
   return (
-    <FormField
+    <BaseInput
       control={control}
       name={name}
-      render={({ field }: any) => (
-        <FormItem>
-          <FormLabel>{label}</FormLabel>
-          <FormControl>
-            <Input
-              placeholder={placeholder ? placeholder : undefined}
-              type="number"
-              {...field}
-            />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      )}
+      label={label}
+      placeholder={placeholder}
+      InputControl={NumberInputControl}
     />
   );
+};
+
+const NumberInputControl = () => {
+  return <Input type="number" />;
 };
