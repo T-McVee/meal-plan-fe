@@ -8,10 +8,10 @@ export enum Measure {
 
 export const IngredientRawSchema = z.object({
   id: z.string().nullable(),
-  name: z.string({ message: "poop" }),
-  price: z.number(),
-  size: z.number(),
-  measure: z.nativeEnum(Measure),
+  name: z.string({ message: "required" }),
+  price: z.string({ message: "required" }).transform((v) => parseFloat(v)),
+  size: z.string({ message: "required" }).transform((v) => parseInt(v)),
+  measure: z.string({ message: "required" }),
   category: z.string().optional(),
   supplier: z.string().optional(),
   sku: z.string().optional(),

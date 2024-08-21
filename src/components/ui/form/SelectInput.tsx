@@ -29,12 +29,15 @@ export const SelectInput = (props: ISelectInputProps) => {
 
 interface ISelectInputControlProps {
   options: IOption[];
+  onChange: (value: string) => void;
+  value: string;
 }
 
 const SelectInputControl = (props: ISelectInputControlProps) => {
-  const { options } = props;
+  const { options, onChange, value } = props;
+
   return (
-    <Select>
+    <Select onValueChange={onChange} defaultValue={value}>
       <SelectTrigger>
         <SelectValue />
       </SelectTrigger>

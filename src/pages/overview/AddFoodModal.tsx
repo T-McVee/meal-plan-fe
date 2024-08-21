@@ -6,18 +6,17 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ModalStatus, useOverviewContext } from "./overviewContext";
-
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { ingredientRaw, IngredientRawSchema, Measure } from "@/data-model";
+import { ingredientRaw, IngredientRawSchema } from "@/data-model";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { TextInput } from "@/components/ui/form/TextInput";
 import { NumberInput } from "@/components/ui/form/NumberInput";
 import { SelectInput } from "@/components/ui/form/SelectInput";
-import { usePantry } from "@/hooks/usePantry";
-import { Pantry } from "@/hooks/useIngredients";
+import { useSuppliers } from "@/hooks/useSuppliers";
+import { useMeasures } from "@/hooks/useMeasures";
+import { useEffect, useMemo } from "react";
 
 interface IProps {
   onSubmit: (data: ingredientRaw) => void;
@@ -26,22 +25,43 @@ interface IProps {
 export const AddFoodModal = (props: IProps) => {
   const { onSubmit } = props;
   const { modalStatus, closeAddFoodModal } = useOverviewContext();
+  const { data: suppliers, isLoading: isLoadingSuppliers } = useSuppliers();
+  const { data: measures, isLoading: isLoadingMeasures } = useMeasures();
 
   const form = useForm<ingredientRaw>({
     resolver: zodResolver(IngredientRawSchema),
     defaultValues: {
-      id: null,
-      name: "Flour",
-      price: 2,
-      size: 10,
-      measure: Measure.Grams,
-      supplier: "",
+      supplier: "0",
     },
   });
+
+  const supplier = form.watch("supplier");
+  const name = form.watch("name");
+  const selectedMeasure = form.watch("measure");
+
+  const measureIsEach = useMemo(() => {
+    const measureData = measures?.find((m) => m.id === selectedMeasure);
+
+    return measureData?.name === "Each";
+  }, [selectedMeasure, measures]);
+
+  useEffect(() => {
+    if (supplier) {
+      const supplierData = suppliers?.find((s) => s.id === supplier);
+      const url = supplierData?.apiBaseURL;
+      if (url) {
+        console.log("fetching data from", url);
+      }
+    }
+  }, [supplier, name]);
 
   function handleSubmit(data: ingredientRaw) {
     onSubmit({ ...data, id: "123" });
     closeAddFoodModal();
+  }
+
+  if (isLoadingSuppliers || isLoadingMeasures) {
+    return <div>Loading...</div>;
   }
 
   return (
@@ -62,21 +82,33 @@ export const AddFoodModal = (props: IProps) => {
             onSubmit={form.handleSubmit(handleSubmit)}
             className="flex flex-col gap-4"
           >
-            <TextInput control={form.control} name="name" label="Food name" />
-            <NumberInput control={form.control} name="price" label="Price" />
-            <NumberInput control={form.control} name="size" label="Size" />
-            <SelectInput
-              control={form.control}
-              name="measure"
-              label="Measure"
-              options={[]}
-            />
             <SelectInput
               control={form.control}
               name="supplier"
               label="Supplier"
-              options={[]}
+              options={suppliers!.map((supplier) => ({
+                label: supplier.name,
+                value: supplier.id,
+              }))}
             />
+            <TextInput control={form.control} name="name" label="Food name" />
+            <NumberInput control={form.control} name="price" label="Price" />
+            <SelectInput
+              control={form.control}
+              name="measure"
+              label="Measure"
+              options={measures!.map((measure) => ({
+                label: measure.extendedName,
+                value: measure.id,
+              }))}
+            />
+            <NumberInput
+              control={form.control}
+              name="size"
+              label="Size"
+              disabled={measureIsEach}
+            />
+
             <Button type="submit">Add food</Button>
           </form>
         </Form>

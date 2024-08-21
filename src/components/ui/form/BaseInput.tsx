@@ -12,14 +12,19 @@ export interface IBaseInputProps {
   control: any;
   name: string;
   label: string;
-  InputControl: any;
   placeholder?: string;
   className?: string;
   options?: IOption[];
+  disabled?: boolean;
 }
 
-export const BaseInput = (props: IBaseInputProps) => {
-  const { control, name, label, InputControl, placeholder, options } = props;
+interface IBaseInputControlProps extends IBaseInputProps {
+  InputControl: any;
+}
+
+export const BaseInput = (props: IBaseInputControlProps) => {
+  const { control, name, label, InputControl, placeholder, options, disabled } =
+    props;
   return (
     <FormField
       control={control}
@@ -32,6 +37,8 @@ export const BaseInput = (props: IBaseInputProps) => {
               placeholder={placeholder ? placeholder : undefined}
               options={options ? options : undefined}
               {...field}
+              onChange={field.onChange}
+              disabled={!!disabled}
             />
           </FormControl>
           {/* <FormDescription>This is your public display name.</FormDescription> */}
