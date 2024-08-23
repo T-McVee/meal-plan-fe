@@ -17,6 +17,7 @@ import { SelectInput } from "@/components/ui/form/SelectInput";
 import { useSuppliers } from "@/hooks/useSuppliers";
 import { useMeasures } from "@/hooks/useMeasures";
 import { useEffect, useMemo, useState } from "react";
+import { SearchInput } from "@/components/ui/form/SearchInput";
 
 interface IProps {
   onSubmit: (data: ingredientRaw) => void;
@@ -102,7 +103,8 @@ export const AddFoodModal = (props: IProps) => {
               }))}
               description="Select a supplier to enable auto search for food items."
             />
-            <TextInput control={form.control} name="name" label={nameLabel} />
+            {/* <TextInput control={form.control} name="name" label={nameLabel} /> */}
+            <SearchInput control={form.control} name="name" label={nameLabel} />
             <NumberInput control={form.control} name="price" label="Price" />
             <SelectInput
               control={form.control}
