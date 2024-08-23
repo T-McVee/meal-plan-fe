@@ -16,7 +16,7 @@ import { NumberInput } from "@/components/ui/form/NumberInput";
 import { SelectInput } from "@/components/ui/form/SelectInput";
 import { useSuppliers } from "@/hooks/useSuppliers";
 import { useMeasures } from "@/hooks/useMeasures";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 interface IProps {
   onSubmit: (data: ingredientRaw) => void;
@@ -28,6 +28,8 @@ export const AddFoodModal = (props: IProps) => {
   const { data: suppliers, isLoading: isLoadingSuppliers } = useSuppliers();
   const { data: measures, isLoading: isLoadingMeasures } = useMeasures();
 
+  const [nameLabel, setNameLabel] = useState<string>("Food");
+
   const form = useForm<ingredientRaw>({
     resolver: zodResolver(IngredientRawSchema),
     defaultValues: {
@@ -35,25 +37,33 @@ export const AddFoodModal = (props: IProps) => {
     },
   });
 
-  const supplier = form.watch("supplier");
-  const name = form.watch("name");
-  const selectedMeasure = form.watch("measure");
+  const supplierWatch = form.watch("supplier");
+  const watchName = form.watch("name");
+  const measureWatch = form.watch("measure");
 
   const measureIsEach = useMemo(() => {
-    const measureData = measures?.find((m) => m.id === selectedMeasure);
-
+    const measureData = measures?.find((m) => m.id === measureWatch);
     return measureData?.name === "Each";
-  }, [selectedMeasure, measures]);
+  }, [measureWatch, measures]);
 
   useEffect(() => {
-    if (supplier) {
-      const supplierData = suppliers?.find((s) => s.id === supplier);
+    if (supplierWatch) {
+      const supplierData = suppliers?.find((s) => s.id === supplierWatch);
+
+      if (supplierData?.id !== "0") {
+        setNameLabel(`Food - auto search enabled`);
+      } else {
+        setNameLabel("Food");
+      }
       const url = supplierData?.apiBaseURL;
       if (url) {
-        console.log("fetching data from", url);
+        console.log(
+          "fetching data from",
+          `${supplierData.productSearchApiURL}${watchName}`
+        );
       }
     }
-  }, [supplier, name]);
+  }, [supplierWatch, watchName, suppliers]);
 
   function handleSubmit(data: ingredientRaw) {
     onSubmit({ ...data, id: "123" });
@@ -90,8 +100,9 @@ export const AddFoodModal = (props: IProps) => {
                 label: supplier.name,
                 value: supplier.id,
               }))}
+              description="Select a supplier to enable auto search for food items."
             />
-            <TextInput control={form.control} name="name" label="Food name" />
+            <TextInput control={form.control} name="name" label={nameLabel} />
             <NumberInput control={form.control} name="price" label="Price" />
             <SelectInput
               control={form.control}

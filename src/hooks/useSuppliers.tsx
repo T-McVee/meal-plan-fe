@@ -1,12 +1,48 @@
 import { useQuery } from "@tanstack/react-query";
 
-type Supplier = {
+type SupplierData = {
   id: string;
   name: string;
   apiBaseURL?: string;
+  productsEndPoint?: string;
 };
 
-const suppliers: Supplier[] = [
+class Supplier {
+  constructor(readonly _supplier: SupplierData) {}
+
+  get name() {
+    return this._supplier.name;
+  }
+
+  get id() {
+    return this._supplier.id;
+  }
+
+  get apiBaseURL() {
+    if (!this._supplier.apiBaseURL) return null;
+    return this._supplier.apiBaseURL;
+  }
+
+  get productsEndPointURL() {
+    if (!this.apiBaseURL || !this._supplier.productsEndPoint) return null;
+    return `${this.apiBaseURL}/${this._supplier.productsEndPoint}`;
+  }
+
+  get productSearchApiURL() {
+    if (!this.productsEndPointURL) return null;
+    return `${this.productsEndPointURL}?searchTerm=`;
+  }
+
+  get hasApi() {
+    return !!this.apiBaseURL;
+  }
+
+  static fromData(data: SupplierData) {
+    return new Supplier(data);
+  }
+}
+
+const suppliers: SupplierData[] = [
   {
     id: "0",
     name: "None",
@@ -14,7 +50,8 @@ const suppliers: Supplier[] = [
   {
     id: "1",
     name: "Woolworths",
-    apiBaseURL: "https://www.woolworths.com.au/apis",
+    apiBaseURL: "https://www.woolworths.com.au",
+    productsEndPoint: "apis/ui/Search/products",
   },
   {
     id: "2",
@@ -32,7 +69,7 @@ const suppliers: Supplier[] = [
 
 // supplier promise
 export const getSuppliers = async (): Promise<Supplier[]> => {
-  return suppliers;
+  return suppliers.map(Supplier.fromData);
 };
 
 export const useSuppliers = () => {
