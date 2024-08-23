@@ -13,6 +13,7 @@ export interface IBaseInputProps {
   name: string;
   label: string;
   placeholder?: string;
+  description?: string;
   className?: string;
   options?: IOption[];
   disabled?: boolean;
@@ -23,15 +24,26 @@ interface IBaseInputControlProps extends IBaseInputProps {
 }
 
 export const BaseInput = (props: IBaseInputControlProps) => {
-  const { control, name, label, InputControl, placeholder, options, disabled } =
-    props;
+  const {
+    control,
+    name,
+    label,
+    InputControl,
+    placeholder,
+    description,
+    options,
+    disabled,
+  } = props;
   return (
     <FormField
       control={control}
       name={name}
       render={({ field }: any) => (
         <FormItem>
-          <FormLabel>{label}</FormLabel>
+          <div className="flex gap-2 justify-start align-top">
+            <FormLabel>{label}</FormLabel>
+            {description && <FormDescription>{description}</FormDescription>}
+          </div>
           <FormControl>
             <InputControl
               placeholder={placeholder ? placeholder : undefined}
@@ -41,7 +53,7 @@ export const BaseInput = (props: IBaseInputControlProps) => {
               disabled={!!disabled}
             />
           </FormControl>
-          {/* <FormDescription>This is your public display name.</FormDescription> */}
+
           <FormMessage />
         </FormItem>
       )}

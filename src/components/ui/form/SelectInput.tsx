@@ -15,16 +15,7 @@ export interface IOption {
 }
 
 export const SelectInput = (props: ISelectInputProps) => {
-  const { control, name, label, options } = props;
-  return (
-    <BaseInput
-      control={control}
-      name={name}
-      label={label}
-      options={options}
-      InputControl={SelectInputControl}
-    />
-  );
+  return <BaseInput {...props} InputControl={SelectInputControl} />;
 };
 
 interface ISelectInputControlProps {
