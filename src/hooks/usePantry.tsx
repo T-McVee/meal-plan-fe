@@ -1,38 +1,43 @@
-import React, { useEffect } from "react";
-import { Pantry, useIngredients } from "./useIngredients";
-import { ingredientRaw } from "@/data-model";
+import { useMemo } from "react";
+import { Ingredient, useIngredients } from "./useIngredients";
+
+import { Measure, useMeasures } from "./useMeasures";
+
+export class Pantry {
+  constructor(private _ingredients: Ingredient[]) {}
+
+  get ingredients() {
+    return this._ingredients;
+  }
+
+  // get ingredientById() { }
+
+  // get ingredientByName() { }
+
+  // get ingredientByCategory() { }
+
+  // get ingredientsBySupplier() { }
+
+  // get ingredientBySku() { }
+
+  // get ingredientByPriceRange() { }
+}
 
 export const usePantry = () => {
-  const { data, isSuccess, isLoading, isError } = useIngredients();
-  const [ingredients, setIngredients] = React.useState<ingredientRaw[] | null>(
-    null
-  );
-  const [pantry, setPantry] = React.useState<Pantry | null>(null);
+  const {
+    ingredients: { data, isSuccess, isLoading, isError },
+    addIngredient: addIngredientToCache,
+  } = useIngredients();
 
-  useEffect(() => {
-    if (isSuccess) {
-      setIngredients(data!);
-    }
-  }, [data, isSuccess]);
+  const { data: measures, isSuccess: isMeasuresSuccess } = useMeasures();
 
-  useEffect(() => {
-    if (ingredients) {
-      setPantry(new Pantry(ingredients));
-    }
-  }, [ingredients]);
-
-  function addIngredient(ingredient: ingredientRaw) {
-    setIngredients([...ingredients!, ingredient]);
-  }
-
-  function removeIngredient(ingredient: ingredientRaw) {
-    setIngredients(ingredients!.filter((i) => i.id !== ingredient.id));
-  }
+  const pantry = useMemo(() => {
+    if (!isSuccess || !isMeasuresSuccess) return null;
+    return new Pantry(data!);
+  }, [data, measures, isSuccess, isMeasuresSuccess]);
 
   return {
     pantry,
-    addIngredient,
-    removeIngredient,
     isLoading: isLoading || !pantry,
     isError,
   };

@@ -1,28 +1,20 @@
 import { Button } from "../../components/ui/button";
 import { usePantry } from "@/hooks/usePantry";
 import { CardCustom } from "../../components/ui/card/CardCustom";
-import {
-  ModalStatus,
-  useOverviewContext,
-} from "@/pages/overview/overviewContext";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { useOverviewContext } from "@/pages/overview/overviewContext";
 import { AddFoodModal } from "./AddFoodModal";
 import { useEffect } from "react";
+import { useIngredients } from "@/hooks/useIngredients";
+import { IIngredient } from "@/data-model";
 
 export const PantryCard = () => {
-  const { pantry, addIngredient } = usePantry();
+  // const { pantry } = usePantry();
+  const { pantry, addIngredient } = useIngredients();
   const { openAddFoodModal } = useOverviewContext();
 
   const colDefs = [
     { field: "name" },
-    { field: "price" },
+    { field: "cost" },
     { field: "size" },
     { field: "measure" },
   ];
@@ -42,7 +34,11 @@ export const PantryCard = () => {
       >
         <Button onClick={openAddFoodModal}>Add food</Button>
       </CardCustom>
-      <AddFoodModal onSubmit={addIngredient} />
+      <AddFoodModal
+        onSubmit={(data: IIngredient) => {
+          addIngredient.mutate(data);
+        }}
+      />
     </>
   );
 };

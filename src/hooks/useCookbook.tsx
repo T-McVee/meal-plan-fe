@@ -1,32 +1,32 @@
 import { recipe } from "@/data-model";
 import { useQuery } from "@tanstack/react-query";
-import { Pantry } from "./useIngredients";
+import { Pantry } from "./usePantry";
 
 export class Cookbook {
   constructor(private _recipes: recipe[], private _pantry: Pantry) {}
 
-  get recipes() {
-    return this._recipes.map((recipe) => ({
-      ...recipe,
-      cost: this.recipeCost(recipe),
-    }));
-  }
+  // get recipes() {
+  //   return this._recipes.map((recipe) => ({
+  //     ...recipe,
+  //     cost: this.recipeCost(recipe),
+  //   }));
+  // }
 
-  recipeCost(recipe: recipe) {
-    return recipe.ingredients
-      .reduce((acc, ingredientPortion) => {
-        const ingredient = this._pantry.ingredients.find(
-          (i) => i.id === ingredientPortion.ingredientId
-        );
+  // recipeCost(recipe: recipe) {
+  //   return recipe.ingredients
+  //     .reduce((acc, ingredientPortion) => {
+  //       const ingredient = this._pantry.ingredients.find(
+  //         (i) => i.id === ingredientPortion.ingredientId
+  //       );
 
-        const portionSize = ingredientPortion.amount;
-        const portionCost =
-          ingredient!.price * (portionSize / ingredient!.size);
+  //       const portionSize = ingredientPortion.amount;
+  //       const portionCost =
+  //         ingredient!.price * (portionSize / ingredient!.size);
 
-        return acc + portionCost;
-      }, 0)
-      .toFixed(2);
-  }
+  //       return acc + portionCost;
+  //     }, 0)
+  //     .toFixed(2);
+  // }
 
   // addRecipe(recipe: recipe) {}
 

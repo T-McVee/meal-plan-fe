@@ -1,67 +1,77 @@
-import { Measure, ingredientRaw } from "@/data-model";
-import { useQuery } from "@tanstack/react-query";
+import { ingredientsApi } from "@/api/supabase/ingredients-api";
+import { IIngredient, IngredientData } from "@/data-model";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { CacheKeys } from "./cache-keys";
+import { Measure, useMeasures } from "./useMeasures";
+import { useMemo } from "react";
+import { Pantry } from "./usePantry";
 
-export class Pantry {
-  constructor(private _ingredients: ingredientRaw[]) {}
+export class Ingredient implements IIngredient {
+  constructor(
+    private _ingredient: IngredientData,
+    private _measures: Measure[]
+  ) {}
 
-  addIngredient(ingredient: ingredientRaw) {
-    this._ingredients = [...this._ingredients, ingredient];
+  get id() {
+    return this._ingredient.id;
   }
 
-  removeIngredient(ingredient: ingredientRaw) {
-    this._ingredients = this.ingredients.filter((i) => i.id !== ingredient.id);
+  get name() {
+    return this._ingredient.name;
   }
 
-  get ingredients() {
-    return this._ingredients;
+  get cost() {
+    return this._ingredient.cost;
   }
 
-  // get ingredientById() { }
+  get size() {
+    return this._ingredient.size;
+  }
 
-  // get ingredientByName() { }
+  get measure() {
+    return (
+      this._measures.find((m) => m.id === this._ingredient.measure_id)?.name ??
+      ""
+    );
+  }
 
-  // get ingredientByCategory() { }
-
-  // get ingredientsBySupplier() { }
-
-  // get ingredientBySku() { }
-
-  // get ingredientByPriceRange() { }
+  get sku() {
+    return this._ingredient.sku ?? undefined;
+  }
 }
 
-const ingredients: ingredientRaw[] = [
-  {
-    id: "1",
-    name: "Eggs",
-    price: 8.2,
-    size: 12,
-    measure: Measure.Each,
-  },
-  {
-    id: "2",
-    name: "Bananas",
-    price: 0.87,
-    size: 1,
-    measure: Measure.Each,
-  },
-];
-
-const ingredientsPromise = new Promise<ingredientRaw[]>((resolve) => {
-  const pantry = ingredients;
-  setTimeout(() => {
-    resolve(pantry);
-  }, 1000);
-});
-
 export const useIngredients = () => {
-  const results = useQuery({
-    queryKey: ["ingredients"],
+  const queryClient = useQueryClient();
+
+  const { data: measures, isSuccess: isMeasuresSuccess } = useMeasures();
+
+  const ingredients = useQuery({
+    queryKey: [CacheKeys.INGREDIENTS],
     queryFn: async () => {
-      const ingredients = await ingredientsPromise;
+      const data = await ingredientsApi.getAll();
+      const ingredients = data.map(
+        (ingredient) => new Ingredient(ingredient, measures!)
+      );
 
       return ingredients;
     },
+    enabled: isMeasuresSuccess,
   });
 
-  return results;
+  const pantry = useMemo(() => {
+    if (!ingredients.isSuccess) return null;
+    return new Pantry(ingredients.data);
+  }, [ingredients.data]);
+
+  const addIngredient = useMutation({
+    mutationFn: async (ingredient: IIngredient) => {
+      console.log("ingredient IN:", ingredient);
+      await ingredientsApi.create(ingredient);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [CacheKeys.INGREDIENTS] });
+    },
+  });
+
+  return { ingredients, pantry, addIngredient };
 };

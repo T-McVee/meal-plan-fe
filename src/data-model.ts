@@ -1,15 +1,15 @@
 import { z } from "zod";
 
-export enum Measure {
+export enum UnitOfMeasure {
   Grams = "g",
   Milliliters = "ml",
   Each = "Each",
 }
 
-export const IngredientRawSchema = z.object({
+export const IngredientSchema = z.object({
   id: z.string().nullable(),
   name: z.string({ message: "required" }),
-  price: z.string({ message: "required" }).transform((v) => parseFloat(v)),
+  cost: z.string({ message: "required" }).transform((v) => parseFloat(v)),
   size: z.string({ message: "required" }).transform((v) => parseInt(v)),
   measure: z.string({ message: "required" }),
   category: z.string().optional(),
@@ -17,9 +17,9 @@ export const IngredientRawSchema = z.object({
   sku: z.string().optional(),
 });
 
-export type ingredientRaw = z.infer<typeof IngredientRawSchema>;
+export interface IIngredient extends z.infer<typeof IngredientSchema> {}
 
-export type ingredientPortion = {
+export type Portion = {
   ingredientId: string;
   amount: number;
 };
@@ -27,7 +27,7 @@ export type ingredientPortion = {
 export type recipe = {
   id: string;
   name: string;
-  ingredients: ingredientPortion[];
+  ingredients: Portion[];
   servings: number;
 };
 
@@ -54,3 +54,18 @@ export enum Category {
   Seafood = "Seafood",
   DryGoods = "Dry Goods",
 }
+
+export type MeasureData = {
+  id: string;
+  unit_name: string;
+  abbreviation?: string;
+};
+
+export type IngredientData = {
+  id: string;
+  name: string;
+  cost: number;
+  size: number;
+  measure_id: string;
+  sku: string | null;
+};

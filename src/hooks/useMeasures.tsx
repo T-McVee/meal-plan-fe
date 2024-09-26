@@ -1,12 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
+import { MeasureData } from "@/data-model";
+import { measureApi } from "@/api/supabase/measure-api";
 
-type MeasureData = {
-  id: string;
-  name: string;
-  shortName?: string;
-};
-
-class Measure {
+export class Measure {
   constructor(readonly _measure: MeasureData) {}
 
   get id() {
@@ -14,11 +10,11 @@ class Measure {
   }
 
   get name() {
-    return this._measure.name;
+    return this._measure.unit_name;
   }
 
   get shortName() {
-    return this._measure.shortName;
+    return this._measure.abbreviation;
   }
 
   get extendedName() {
@@ -30,31 +26,15 @@ class Measure {
   }
 }
 
-const measures: MeasureData[] = [
-  {
-    id: "1",
-    name: "Grams",
-    shortName: "g",
-  },
-  {
-    id: "2",
-    name: "Milliliters",
-    shortName: "ml",
-  },
-  {
-    id: "3",
-    name: "Each",
-    shortName: "ea",
-  },
-];
-
-export const getMeasures = async (): Promise<Measure[]> => {
-  return measures.map(Measure.fromData);
-};
-
 export const useMeasures = () => {
-  return useQuery({
+  const measures = useQuery({
     queryKey: ["measures"],
-    queryFn: getMeasures,
+    queryFn: async () => {
+      const data = await measureApi.getAll();
+      const measures = data.map(Measure.fromData);
+      return measures;
+    },
   });
+
+  return measures;
 };
