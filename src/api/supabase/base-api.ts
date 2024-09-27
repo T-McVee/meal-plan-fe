@@ -1,4 +1,4 @@
-import { supabase } from "@/App";
+import { supabase } from "@/core/supaBaseClient";
 
 export class BaseApi<T> {
   private readonly _listName: string;
