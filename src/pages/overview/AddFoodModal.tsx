@@ -8,7 +8,6 @@ import {
 import { ModalStatus, useOverviewContext } from "./overviewContext";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { IIngredient } from "@/data-model";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { TextInput } from "@/components/ui/form/TextInput";
@@ -16,8 +15,8 @@ import { NumberInput } from "@/components/ui/form/NumberInput";
 import { SelectInput } from "@/components/ui/form/SelectInput";
 import { useSuppliers } from "@/hooks/useSuppliers";
 import { useMeasures } from "@/hooks/useMeasures";
-import { useEffect, useMemo, useState } from "react";
-import { SearchInput } from "@/components/ui/form/SearchInput";
+import { IIngredient, IngredientSchema } from "../pantry/ingredient-types";
+import { useMemo, useState } from "react";
 
 interface IProps {
   onSubmit: (data: IIngredient) => void;
@@ -32,22 +31,14 @@ export const AddFoodModal = (props: IProps) => {
   const [nameLabel, setNameLabel] = useState<string>("Food");
 
   const form = useForm<IIngredient>({
-    // resolver: zodResolver(IngredientRawSchema),
+    resolver: zodResolver(IngredientSchema),
     defaultValues: {
-      supplier: "0",
       name: "",
-      cost: 0,
+      cost: undefined,
       measure: "",
-      // size: 0,
+      size: undefined,
     },
   });
-
-  const measureWatch = form.watch("measure");
-
-  const measureIsEach = useMemo(() => {
-    const measureData = measures?.find((m) => m.id === measureWatch);
-    return measureData?.name === "Each";
-  }, [measureWatch, measures]);
 
   function handleSubmit(data: IIngredient) {
     console.log("Add food submit:", data);
@@ -77,18 +68,7 @@ export const AddFoodModal = (props: IProps) => {
             onSubmit={form.handleSubmit(handleSubmit)}
             className="flex flex-col gap-4"
           >
-            {/* <SelectInput
-              control={form.control}
-              name="supplier"
-              label="Supplier"
-              options={suppliers!.map((supplier) => ({
-                label: supplier.name,
-                value: supplier.id,
-              }))}
-              description="Select a supplier to enable auto search for food items."
-            /> */}
             <TextInput control={form.control} name="name" label={nameLabel} />
-            {/* <SearchInput control={form.control} name="name" label={nameLabel} /> */}
             <NumberInput control={form.control} name="cost" label="cost" />
             <SelectInput
               control={form.control}
@@ -99,9 +79,7 @@ export const AddFoodModal = (props: IProps) => {
                 value: measure.id,
               }))}
             />
-            {!measureIsEach && (
-              <NumberInput control={form.control} name="size" label="Size" />
-            )}
+            <NumberInput control={form.control} name="size" label="Size" />
             <Button type="submit">Add food</Button>
           </form>
         </Form>
@@ -109,22 +87,3 @@ export const AddFoodModal = (props: IProps) => {
     </Dialog>
   );
 };
-
-// useEffect(() => {
-//   if (supplierWatch) {
-//     const supplierData = suppliers?.find((s) => s.id === supplierWatch);
-
-//     if (supplierData?.id !== "0") {
-//       setNameLabel(`Food - auto search enabled`);
-//     } else {
-//       setNameLabel("Food");
-//     }
-//     const url = supplierData?.apiBaseURL;
-//     if (url) {
-//       console.log(
-//         "fetching data from",
-//         `${supplierData.productSearchApiURL}${watchName}`
-//       );
-//     }
-//   }
-// }, [supplierWatch, watchName, suppliers]);

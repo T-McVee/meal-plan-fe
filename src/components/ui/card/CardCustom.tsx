@@ -22,7 +22,7 @@ export const CardCustom = (props: IProps) => {
   const { colDefs, rowData, title, description, children } = props;
 
   return (
-    <Card className="w-3/5 drop-shadow-lg">
+    <Card className="w-full md:w-3/5 drop-shadow-lg">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         <CardDescription>{description}</CardDescription>

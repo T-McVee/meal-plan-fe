@@ -1,9 +1,11 @@
-import { usePantry } from "@/hooks/usePantry";
 import { Package2 } from "lucide-react";
 import { Skeleton } from "./skeleton";
+import { useIngredients } from "@/hooks/useIngredients";
 
 export const SideNav = () => {
-  const { isLoading } = usePantry();
+  const {
+    ingredients: { isLoading },
+  } = useIngredients();
 
   return (
     <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">

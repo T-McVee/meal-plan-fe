@@ -1,7 +1,7 @@
 import React from "react";
 import OverviewContextProvider from "./overviewContext";
 
-import { Cookbook } from "@/components/ui/Cookbook";
+import { CookbookCard } from "./CookbookCard";
 import { PantryCard } from "./PantryCard";
 
 interface IProps {
@@ -9,12 +9,13 @@ interface IProps {
 }
 
 export const OverviewPage = () => {
+  // TODO: load hooks here
   return (
-    <div className="flex px-6 gap-6">
-      <OverviewContextProvider>
+    <OverviewContextProvider>
+      <div className="flex flex-col md:flex-row px-6 gap-6">
         <PantryCard />
-        <Cookbook />
-      </OverviewContextProvider>
-    </div>
+        <CookbookCard />
+      </div>
+    </OverviewContextProvider>
   );
 };

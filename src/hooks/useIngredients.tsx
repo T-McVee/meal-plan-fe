@@ -1,10 +1,11 @@
 import { ingredientsApi } from "@/api/supabase/ingredients-api";
-import { IIngredient, IngredientData } from "@/data-model";
+import { IngredientData } from "@/data-model";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CacheKeys } from "./cache-keys";
 import { Measure, useMeasures } from "./useMeasures";
 import { useMemo } from "react";
 import { Pantry } from "./usePantry";
+import { IIngredient } from "@/pages/pantry/ingredient-types";
 
 export class Ingredient implements IIngredient {
   constructor(
@@ -32,6 +33,13 @@ export class Ingredient implements IIngredient {
     return (
       this._measures.find((m) => m.id === this._ingredient.measure_id)?.name ??
       ""
+    );
+  }
+
+  get measureAbbreviation() {
+    return (
+      this._measures.find((m) => m.id === this._ingredient.measure_id)
+        ?.shortName ?? ""
     );
   }
 
@@ -73,5 +81,5 @@ export const useIngredients = () => {
     },
   });
 
-  return { ingredients, pantry, addIngredient };
+  return { ingredients, addIngredient };
 };

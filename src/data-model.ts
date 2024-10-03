@@ -1,71 +1,44 @@
-import { z } from "zod";
+// DATABASE types
+export interface RecipeData {
+  id: string;
+  user_id: string;
+  name: string;
+  servings: number;
+  yield: number;
+  measure_id: string; // uuid
+  created_at: string; // ISO date string
+}
+
+export interface PortionData {
+  id: string;
+  ingredient_id: string;
+  recipe_id: string; // uuid
+  measure_id: string; // uuid
+  user_id: string; // uuid
+  amount: number;
+  created_at: string; // ISO date string
+}
+
+export interface MeasureData {
+  id: string; // uuid
+  unit_name: string;
+  abbreviation: string;
+  created_at: string; // ISO date string
+}
+
+export interface IngredientData {
+  id: string; // uuid
+  user_id: string; // uuid
+  name: string;
+  measure_id: string; // uuid
+  size: number;
+  cost: number; // currency
+  sku: string | null;
+  created_at: string; // ISO date string
+}
 
 export enum UnitOfMeasure {
   Grams = "g",
   Milliliters = "ml",
   Each = "Each",
 }
-
-export const IngredientSchema = z.object({
-  id: z.string().nullable(),
-  name: z.string({ message: "required" }),
-  cost: z.string({ message: "required" }).transform((v) => parseFloat(v)),
-  size: z.string({ message: "required" }).transform((v) => parseInt(v)),
-  measure: z.string({ message: "required" }),
-  category: z.string().optional(),
-  supplier: z.string().optional(),
-  sku: z.string().optional(),
-});
-
-export interface IIngredient extends z.infer<typeof IngredientSchema> {}
-
-export type Portion = {
-  ingredientId: string;
-  amount: number;
-};
-
-export type recipe = {
-  id: string;
-  name: string;
-  ingredients: Portion[];
-  servings: number;
-};
-
-export class Meal {
-  constructor(public recipe: recipe) {}
-
-  // get name() { }
-
-  // get numberOfServings() { }
-
-  // get ingredients() { }
-
-  // get totalCost() { }
-
-  // get costPerServing() { }
-
-  // get numberOfServings() { }
-}
-
-export enum Category {
-  Produce = "Produce",
-  Dairy = "Dairy",
-  Meat = "Meat",
-  Seafood = "Seafood",
-  DryGoods = "Dry Goods",
-}
-
-export type MeasureData = {
-  id: string;
-  unit_name: string;
-  abbreviation?: string;
-};
-
-export type IngredientData = {
-  id: string;
-  name: string;
-  cost: number;
-  size: number;
-  measure_id: string;
-  sku: string | null;
-};

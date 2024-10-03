@@ -1,15 +1,16 @@
 import { Button } from "../../components/ui/button";
-import { usePantry } from "@/hooks/usePantry";
 import { CardCustom } from "../../components/ui/card/CardCustom";
 import { useOverviewContext } from "@/pages/overview/overviewContext";
 import { AddFoodModal } from "./AddFoodModal";
 import { useEffect } from "react";
 import { useIngredients } from "@/hooks/useIngredients";
-import { IIngredient } from "@/data-model";
+import { IIngredient } from "../pantry/ingredient-types";
 
 export const PantryCard = () => {
-  // const { pantry } = usePantry();
-  const { pantry, addIngredient } = useIngredients();
+  const {
+    ingredients: { data: ingredients },
+    addIngredient,
+  } = useIngredients();
   const { openAddFoodModal } = useOverviewContext();
 
   const colDefs = [
@@ -18,11 +19,11 @@ export const PantryCard = () => {
     { field: "size" },
     { field: "measure" },
   ];
-  const rowData = pantry?.ingredients;
+  const rowData = ingredients;
 
   useEffect(() => {
     console.log("ingredients:", rowData);
-  }, [rowData]);
+  }, [ingredients]);
 
   return (
     <>
